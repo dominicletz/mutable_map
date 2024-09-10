@@ -1,5 +1,5 @@
 defmodule MutableMap.Beacon do
-  @doc false
+  @moduledoc false
   use GenServer
 
   def start(:normal, _args) do
