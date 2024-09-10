@@ -10,6 +10,10 @@ defmodule MutableMap do
     %MutableMap{ref: ref, id: id}
   end
 
+  def new(list) do
+    from_list(list)
+  end
+
   def get(map, key, default \\ nil) do
     case :ets.lookup(@table, {map.id, key}) do
       [{_key, value}] -> value
@@ -55,12 +59,11 @@ defmodule MutableMap do
   end
 
   def to_list(map) do
-    :ets.select(@table, {{map.id, :_}, :_})
+    :ets.select(MutableMap.Beacon, [{{{map.id, :"$1"}, :"$2"}, [], [{{:"$1", :"$2"}}]}])
   end
 
   def from_list(list) do
-    map = new()
-    Enum.reduce(list, map, fn {key, value}, map -> put(map, key, value) end)
+    Enum.reduce(list, new(), fn {key, value}, map -> put(map, key, value) end)
   end
 
   def size(map) do
@@ -89,7 +92,7 @@ defimpl Enumerable, for: MutableMap do
   end
 
   def reduce(map, acc, fun) do
-    Enum.reduce(MutableMap.to_list(map), acc, fun)
+    Enumerable.reduce(MutableMap.to_list(map), acc, fun)
   end
 
   def slice(_map) do

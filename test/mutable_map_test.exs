@@ -28,6 +28,23 @@ defmodule MutableMapTest do
     assert %MutableMap{} = MutableMap.put(map, :a, 1)
     assert MutableMap.keys(map) == [:a]
     assert %MutableMap{} = MutableMap.put(map, :b, 2)
-    assert MutableMap.keys(map) == [:a, :b]
+    assert Enum.sort(MutableMap.keys(map)) == [:a, :b]
+  end
+
+  test "enum protocol" do
+    map = MutableMap.new()
+    assert Enum.to_list(map) == []
+    assert %MutableMap{} = MutableMap.put(map, :a, 1)
+    assert Enum.to_list(map) == [{:a, 1}]
+    assert %MutableMap{} = MutableMap.put(map, :b, 2)
+    assert Enum.sort(Enum.to_list(map)) == [{:a, 1}, {:b, 2}]
+
+    for {key, value} <- map do
+      if key == :a do
+        assert value == 1
+      else
+        assert value == 2
+      end
+    end
   end
 end
