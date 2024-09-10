@@ -1,7 +1,7 @@
 defmodule MutableMap.MixProject do
   use Mix.Project
 
-  @version "1.0.0"
+  @version "1.0.1"
   @name "MutableMap"
   @url "https://github.com/dominicletz/mutable_map"
   @maintainers ["Dominic Letz"]
