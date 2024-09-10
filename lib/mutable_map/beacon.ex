@@ -12,17 +12,24 @@ defmodule MutableMap.Beacon do
 
   @impl GenServer
   def init([]) do
-    :ets.new(__MODULE__, [:set, :public, :named_table])
     {:ok, %{}}
   end
 
   def new_map_ref() do
-    WeakRef.new(Process.whereis(__MODULE__))
+    GenServer.call(__MODULE__, :new_map_ref)
   end
 
   @impl GenServer
-  def handle_info({:DOWN, map_ref, :weak_ref}, state) do
-    :ets.select_delete(__MODULE__, [{{{map_ref, :_}, :_}, [], [true]}])
+  def handle_call(:new_map_ref, _from, state) do
+    {ref, id} = WeakRef.new(Process.whereis(__MODULE__))
+    ets = :ets.new(__MODULE__, [:set, :public])
+    {:reply, {ref, ets}, Map.put(state, id, ets)}
+  end
+
+  @impl GenServer
+  def handle_info({:DOWN, id, :weak_ref}, state) do
+    {ets, state} = Map.pop!(state, id)
+    :ets.delete(ets)
     {:noreply, state}
   end
 end

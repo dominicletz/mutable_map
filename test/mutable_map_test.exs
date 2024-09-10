@@ -20,6 +20,11 @@ defmodule MutableMapTest do
     assert MutableMap.get(map, :a) == nil
     assert MutableMap.size(map) == 0
     assert MutableMap.empty?(map)
+
+    map2 = MutableMap.new([{:a, 1}, {:b, 2}])
+    assert MutableMap.size(map2) == 2
+    assert MutableMap.get(map2, :a) == 1
+    assert MutableMap.get(map2, :b) == 2
   end
 
   test "keys" do
@@ -29,6 +34,10 @@ defmodule MutableMapTest do
     assert MutableMap.keys(map) == [:a]
     assert %MutableMap{} = MutableMap.put(map, :b, 2)
     assert Enum.sort(MutableMap.keys(map)) == [:a, :b]
+
+    assert MutableMap.has_key?(map, :a)
+    assert MutableMap.has_key?(map, :b)
+    assert not MutableMap.has_key?(map, :c)
   end
 
   test "enum protocol" do
