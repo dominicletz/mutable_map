@@ -24,7 +24,7 @@ defmodule MutableMap.Beacon do
   end
 
   @impl GenServer
-  def handle_info({:ETS_TRANSFER, ets, _from_pid, id}, state) do
+  def handle_info({:"ETS-TRANSFER", ets, _from_pid, id}, state) do
     {:noreply, Map.put(state, id, ets)}
   end
 
