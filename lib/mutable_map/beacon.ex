@@ -16,14 +16,16 @@ defmodule MutableMap.Beacon do
   end
 
   def new_map_ref() do
-    GenServer.call(__MODULE__, :new_map_ref)
+    pid = Process.whereis(__MODULE__)
+    {ref, id} = WeakRef.new(pid)
+    ets = :ets.new(__MODULE__, [:set, :public])
+    :ets.give_away(ets, pid, id)
+    {ref, ets}
   end
 
   @impl GenServer
-  def handle_call(:new_map_ref, _from, state) do
-    {ref, id} = WeakRef.new(Process.whereis(__MODULE__))
-    ets = :ets.new(__MODULE__, [:set, :public])
-    {:reply, {ref, ets}, Map.put(state, id, ets)}
+  def handle_info({:ETS_TRANSFER, ets, _from_pid, id}, state) do
+    {:noreply, Map.put(state, id, ets)}
   end
 
   @impl GenServer
