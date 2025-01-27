@@ -56,4 +56,9 @@ defmodule MutableMapTest do
       end
     end
   end
+
+  test "reduce" do
+    map = MutableMap.new([{:a, 1}, {:b, 2}])
+    assert MutableMap.reduce(map, 0, fn {_key, value}, acc -> acc + value end) == 3
+  end
 end

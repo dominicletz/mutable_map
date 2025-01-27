@@ -125,6 +125,10 @@ defmodule MutableMap do
   def has_key?(map, key) do
     :ets.lookup(map.table, key) != []
   end
+
+  def reduce(map, acc, fun) do
+    :ets.foldl(fun, acc, map.table)
+  end
 end
 
 defimpl Enumerable, for: MutableMap do
